@@ -7,6 +7,9 @@ on:
         required: true
         type: string
 
+permissions:
+  pull-requests: write
+
 jobs:
   create-new-version:
     runs-on: ubuntu-latest
@@ -45,10 +48,14 @@ jobs:
             exit 1
           fi
 
+          echo "Committing files..."
           git add .
           git commit -m "release: version ${{ inputs.version }}"
+
+          echo "Pushing branch..."
           git push origin version-${{ inputs.version }}
 
+          echo "Creating PR..."
           gh pr create \
             --base main \
             --head version-${{ inputs.version }} \
