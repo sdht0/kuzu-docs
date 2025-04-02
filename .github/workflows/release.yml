@@ -1,0 +1,15 @@
+name: New release
+on:
+  workflow_dispatch:
+    version:
+      description: 'New version'
+      required: true
+      type: string
+
+jobs:
+  print-tag:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.version }} 
+    steps:
+      - name: Print the input tag to STDOUT
+        run: echo  The new version is ${{ inputs.version }} 
