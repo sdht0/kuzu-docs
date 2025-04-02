@@ -62,6 +62,6 @@ jobs:
             --base main \
             --head version-${{ inputs.version }} \
             --title "release: version ${{ inputs.version }}" \
-            --ody ""
+            --body ""
         env:
             GH_TOKEN: ${{ github.token }}
