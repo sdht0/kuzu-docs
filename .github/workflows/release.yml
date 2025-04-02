@@ -8,9 +8,41 @@ on:
         type: string
 
 jobs:
-  print-tag:
+  create-new-version:
     runs-on: ubuntu-latest
-    if: ${{ inputs.version }} 
+    if: ${{ inputs.version }}
     steps:
-      - name: Print the input tag to STDOUT
-        run: echo  The new version is ${{ inputs.version }} 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Create branch
+        run: git checkout -b version-${{ inputs.version }}
+
+      - name: Edit file
+        run: |
+          sed --in-place --regexp-extended \
+            -e 's;(kuzu/releases/download/v)[0-9\.]+;\1${{ inputs.version }};' \
+            -e 's;(<version>)[0-9\.]+(</version>);\1${{ inputs.version }}\2;' \
+            -e 's;(com.kuzudb:kuzu:)[0-9\.]+;\1${{ inputs.version }};' \
+            **/*.mdx **/*.md
+
+      - name: Push changes
+        run: |
+          if git diff-index --quiet HEAD -- ;then
+            echo "No files were updated to version ${{ inputs.version }}"
+            exit 1
+          fi
+
+          git add .
+          git commit -m "release: version ${{ inputs.version }}"
+          git push origin version-${{ inputs.version }}
+
+          gh pr create \
+            --base main \
+            --head version-${{ inputs.version }} \
+            --title "release: version ${{ inputs.version }}"
