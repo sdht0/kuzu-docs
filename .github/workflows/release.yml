@@ -23,7 +23,7 @@ jobs:
       - name: Check existing branch
         run: |
           if git ls-remote --exit-code --quiet --heads origin refs/heads/version-${{ inputs.version }} > /dev/null;then
-            echo "Branch already exists"
+            echo "Branch already exists: origin -> version-${{ inputs.version }}"
             exit 1
           fi
 
@@ -52,6 +52,7 @@ jobs:
           gh pr create \
             --base main \
             --head version-${{ inputs.version }} \
-            --title "release: version ${{ inputs.version }}"
+            --title "release: version ${{ inputs.version }}" \
+            --ody ""
         env:
             GH_TOKEN: ${{ github.token }}
