@@ -49,6 +49,7 @@ jobs:
           fi
 
           echo "Committing files..."
+          git status
           git add .
           git commit -m "release: version ${{ inputs.version }}"
 
