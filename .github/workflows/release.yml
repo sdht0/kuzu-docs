@@ -20,6 +20,13 @@ jobs:
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
+      - name: Check existing branch
+        run: |
+          if git ls-remote --exit-code --quiet --heads origin refs/heads/version-${{ inputs.version }} > /dev/null;then
+            echo "Branch already exists"
+            exit 1
+          fi
+
       - name: Create branch
         run: git checkout -b version-${{ inputs.version }}
 
@@ -46,3 +53,5 @@ jobs:
             --base main \
             --head version-${{ inputs.version }} \
             --title "release: version ${{ inputs.version }}"
+        env:
+            GH_TOKEN: ${{ github.token }}
