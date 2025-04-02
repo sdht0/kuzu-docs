@@ -29,7 +29,7 @@ jobs:
             -e 's;(kuzu/releases/download/v)[0-9\.]+;\1${{ inputs.version }};' \
             -e 's;(<version>)[0-9\.]+(</version>);\1${{ inputs.version }}\2;' \
             -e 's;(com.kuzudb:kuzu:)[0-9\.]+;\1${{ inputs.version }};' \
-            **/*.mdx **/*.md
+            $(find src/ -type f -name '*.mdx' -o -name '*.md')
 
       - name: Push changes
         run: |
